@@ -1,303 +1,653 @@
-const music = new Audio('vande.mp3');
+"use strict";
 
-// create Array 
+/*
 
-const songs = [
-    {
-        id:'1',
-        songName:` On My Way <br>
-        <div class="subtitle">Alan Walker</div>`,
-        poster: "img/1.jpg"
-    },
-    {
-        id:'2',
-        songName:` Alan Walker-Fade <br>
-        <div class="subtitle">Alan Walker</div>`,
-        poster: "img/2.jpg"
-    },
-    // all object type 
-    {
-        id:"3",
-        songName: `Cartoon - On & On <br><div class="subtitle"> Daniel Levi</div>`,
-        poster: "img/3.jpg",
-    },
-    {
-        id:"4",
-        songName: `Warriyo - Mortals <br><div class="subtitle">Mortals</div>`,
-        poster: "img/4.jpg",
-    },
-    {
-        id:"5",
-        songName: `Ertugrul Gazi <br><div class="subtitle">Ertugrul</div>`,
-        poster: "img/5.jpg",
-    },
-    {
-        id:"6",
-        songName: `Electronic Music <br><div class="subtitle">Electro</div>`,
-        poster: "img/6.jpg",
-    },
-    {
-        id:"7",
-        songName: `Agar Tum Sath Ho <br><div class="subtitle">Tamashaa</div>`,
-        poster: "img/7.jpg",
-    },
-    {
-        id:"8",
-        songName: `Suna Hai <br><div class="subtitle">Neha Kakker</div>`,
-        poster: "img/8.jpg",
-    },
-    {
-        id:"9",
-        songName: `Dilber <br><div class="subtitle">Satyameva Jayate</div>`,
-        poster: "img/9.jpg",
-    },
-    {
-        id:"10",
-        songName: `Duniya <br><div class="subtitle">Luka Chuppi</div>`,
-        poster: "img/10.jpg",
-    },
-    {
-        id:"11",
-        songName: `Lagdi Lahore Di <br><div class="subtitle">Street Dancer 3D</div>`,
-        poster: "img/11.jpg",
-    },
-    {
-        id:"12",
-        songName: `Putt Jatt Da <br><div class="subtitle">Putt Jatt Da</div>`,
-        poster: "img/12.jpg",
-    },
-    {
-        id:"13",
-        songName: `Baarishein <br><div class="subtitle">Atif Aslam</div>`,
-        poster: "img/13.jpg",
-    },
-    {
-        id:"14",
-        songName: `Vaaste <br><div class="subtitle">Dhvani Bhanushali</div>`,
-        poster: "img/14.jpg",
-    },
-    {
-        id:"15",
-        songName: `Lut Gaye <br><div class="subtitle">Jubin Nautiyal</div>`,
-        poster: "img/15.jpg",
-    },
-]
+A SIMPLE TIC-TAC-TOE GAME IN JAVASCRIPT
 
-Array.from(document.getElementsByClassName('songItem')).forEach((element, i)=>{
-    element.getElementsByTagName('img')[0].src = songs[i].poster;
-    element.getElementsByTagName('h5')[0].innerHTML = songs[i].songName;
-})
+(1) Grid layout
 
+The game grid is represented in the array Grid.cells as follows:
 
-let masterPlay = document.getElementById('masterPlay');
-let wave = document.getElementsByClassName('wave')[0];
+[0] [1] [2]
+[3] [4] [5]
+[6] [7] [8]
 
-masterPlay.addEventListener('click',()=>{
-    if (music.paused || music.currentTime <=0) {
-        music.play();
-        masterPlay.classList.remove('bi-play-fill');
-        masterPlay.classList.add('bi-pause-fill');
-        wave.classList.add('active2');
-    } else {
-        music.pause();
-        masterPlay.classList.add('bi-play-fill');
-        masterPlay.classList.remove('bi-pause-fill');
-        wave.classList.remove('active2');
+The cells (array elements) hold the following numeric values:
+0 if not occupied, 1 for player, 3 for computer.
+This allows us to quickly get an overview of the game state:
+if the sum of all the cells in a row is 9, the computer wins,
+if it is 3 and all the cells are occupied, the human player wins,
+etc.
+
+(2) Strategy of makeComputerMove()
+
+The computer first  looks for almost completed rows, columns, and
+diagonals, where there are two fields occupied either by the human
+player or by the computer itself. If the computer can win by
+completing a sequence, it does so; if it can block the player from
+winning with the next move, it does that. If none of that applies,
+it plays the center field if that's free, otherwise it selects a
+random free field. This is not a 100 % certain strategy, but the
+gameplay experience is fairly decent.
+
+*/
+
+//==================================
+// EVENT BINDINGS
+//==================================
+
+// Bind Esc key to closing the modal dialog
+document.onkeypress = function (evt) {
+    evt = evt || window.event;
+    var modal = document.getElementsByClassName("modal")[0];
+    if (evt.keyCode === 27) {
+        modal.style.display = "none";
     }
-} )
+};
 
+// When the user clicks anywhere outside of the modal dialog, close it
+window.onclick = function (evt) {
+    var modal = document.getElementsByClassName("modal")[0];
+    if (evt.target === modal) {
+        modal.style.display = "none";
+    }
+};
 
-const makeAllPlays = () =>{
-    Array.from(document.getElementsByClassName('playListPlay')).forEach((element)=>{
-            element.classList.add('bi-play-circle-fill');
-            element.classList.remove('bi-pause-circle-fill');
-    })
-}
-const makeAllBackgrounds = () =>{
-    Array.from(document.getElementsByClassName('songItem')).forEach((element)=>{
-            element.style.background = "rgb(105, 105, 170, 0)";
-    })
+//==================================
+// HELPER FUNCTIONS
+//==================================
+function sumArray(array) {
+    var sum = 0,
+        i = 0;
+    for (i = 0; i < array.length; i++) {
+        sum += array[i];
+    }
+    return sum;
 }
 
-let index = 0;
-let poster_master_play = document.getElementById('poster_master_play');
-let title = document.getElementById('title');
-Array.from(document.getElementsByClassName('playListPlay')).forEach((element)=>{
-    element.addEventListener('click', (e)=>{
-        index = e.target.id;
-        makeAllPlays();
-        e.target.classList.remove('bi-play-circle-fill');
-        e.target.classList.add('bi-pause-circle-fill');
-        music.src = `audio/${index}.mp3`;
-        poster_master_play.src =`img/${index}.jpg`;
-        music.play();
-        let song_title = songs.filter((ele)=>{
-            return ele.id == index;
-        })
-
-        song_title.forEach(ele =>{
-            let {songName} = ele;
-            title.innerHTML = songName;
-        })
-        masterPlay.classList.remove('bi-play-fill');
-        masterPlay.classList.add('bi-pause-fill');
-        wave.classList.add('active2');
-        music.addEventListener('ended',()=>{
-            masterPlay.classList.add('bi-play-fill');
-            masterPlay.classList.remove('bi-pause-fill');
-            wave.classList.remove('active2');
-        })
-        makeAllBackgrounds();
-        Array.from(document.getElementsByClassName('songItem'))[`${index-1}`].style.background = "rgb(105, 105, 170, .1)";
-    })
-})
-
-
-let currentStart = document.getElementById('currentStart');
-let currentEnd = document.getElementById('currentEnd');
-let seek = document.getElementById('seek');
-let bar2 = document.getElementById('bar2');
-let dot = document.getElementsByClassName('dot')[0];
-
-music.addEventListener('timeupdate',()=>{
-    let music_curr = music.currentTime;
-    let music_dur = music.duration;
-
-    let min = Math.floor(music_dur/60);
-    let sec = Math.floor(music_dur%60);
-    if (sec<10) {
-        sec = `0${sec}`
+function isInArray(element, array) {
+    if (array.indexOf(element) > -1) {
+        return true;
     }
-    currentEnd.innerText = `${min}:${sec}`;
+    return false;
+}
 
-    let min1 = Math.floor(music_curr/60);
-    let sec1 = Math.floor(music_curr%60);
-    if (sec1<10) {
-        sec1 = `0${sec1}`
+function shuffleArray(array) {
+    var counter = array.length,
+        temp,
+        index;
+    while (counter > 0) {
+        index = Math.floor(Math.random() * counter);
+        counter--;
+        temp = array[counter];
+        array[counter] = array[index];
+        array[index] = temp;
     }
-    currentStart.innerText = `${min1}:${sec1}`;
+    return array;
+}
 
-    let progressbar = parseInt((music.currentTime/music.duration)*100);
-    seek.value = progressbar;
-    let seekbar = seek.value;
-    bar2.style.width = `${seekbar}%`;
-    dot.style.left = `${seekbar}%`;
-})
+function intRandom(min, max) {
+    var rand = min + Math.random() * (max + 1 - min);
+    return Math.floor(rand);
+}
 
-seek.addEventListener('change', ()=>{
-    music.currentTime = seek.value * music.duration/100;
-})
+// GLOBAL VARIABLES
+var moves = 0,
+    winner = 0,
+    x = 1,
+    o = 3,
+    player = x,
+    computer = o,
+    whoseTurn = x,
+    gameOver = false,
+    score = {
+        ties: 0,
+        player: 0,
+        computer: 0
+    },
+    xText = "<span class=\"x\">&times;</class>",
+    oText = "<span class=\"o\">o</class>",
+    playerText = xText,
+    computerText = oText,
+    difficulty = 1,
+    myGrid = null;
 
-music.addEventListener('ended', ()=>{
-    masterPlay.classList.add('bi-play-fill');
-    masterPlay.classList.remove('bi-pause-fill');
-    wave.classList.remove('active2');
-})
+//==================================
+// GRID OBJECT
+//==================================
 
+// Grid constructor
+//=================
+function Grid() {
+    this.cells = new Array(9);
+}
 
-let vol_icon = document.getElementById('vol_icon');
-let vol = document.getElementById('vol');
-let vol_dot = document.getElementById('vol_dot');
-let vol_bar = document.getElementsByClassName('vol_bar')[0];
+// Grid methods
+//=============
 
-vol.addEventListener('change', ()=>{
-    if (vol.value == 0) {
-        vol_icon.classList.remove('bi-volume-down-fill');
-        vol_icon.classList.add('bi-volume-mute-fill');
-        vol_icon.classList.remove('bi-volume-up-fill');
-    }
-    if (vol.value > 0) {
-        vol_icon.classList.add('bi-volume-down-fill');
-        vol_icon.classList.remove('bi-volume-mute-fill');
-        vol_icon.classList.remove('bi-volume-up-fill');
-    }
-    if (vol.value > 50) {
-        vol_icon.classList.remove('bi-volume-down-fill');
-        vol_icon.classList.remove('bi-volume-mute-fill');
-        vol_icon.classList.add('bi-volume-up-fill');
-    }
-
-    let vol_a = vol.value;
-    vol_bar.style.width = `${vol_a}%`;
-    vol_dot.style.left = `${vol_a}%`;
-    music.volume = vol_a/100;
-})
-
-
-
-let back = document.getElementById('back');
-let next = document.getElementById('next');
-
-back.addEventListener('click', ()=>{
-    index -= 1;
-    if (index < 1) {
-        index = Array.from(document.getElementsByClassName('songItem')).length;
-    }
-    music.src = `audio/${index}.mp3`;
-    poster_master_play.src =`img/${index}.jpg`;
-    music.play();
-    let song_title = songs.filter((ele)=>{
-        return ele.id == index;
-    })
-
-    song_title.forEach(ele =>{
-        let {songName} = ele;
-        title.innerHTML = songName;
-    })
-    makeAllPlays()
-
-    document.getElementById(`${index}`).classList.remove('bi-play-fill');
-    document.getElementById(`${index}`).classList.add('bi-pause-fill');
-    makeAllBackgrounds();
-    Array.from(document.getElementsByClassName('songItem'))[`${index-1}`].style.background = "rgb(105, 105, 170, .1)";
-    
-})
-next.addEventListener('click', ()=>{
-    index -= 0;
-    index += 1;
-    if (index > Array.from(document.getElementsByClassName('songItem')).length) {
-        index = 1;
+// Get free cells in an array.
+// Returns an array of indices in the original Grid.cells array, not the values
+// of the array elements.
+// Their values can be accessed as Grid.cells[index].
+Grid.prototype.getFreeCellIndices = function () {
+    var i = 0,
+        resultArray = [];
+    for (i = 0; i < this.cells.length; i++) {
+        if (this.cells[i] === 0) {
+            resultArray.push(i);
         }
-    music.src = `audio/${index}.mp3`;
-    poster_master_play.src =`img/${index}.jpg`;
-    music.play();
-    let song_title = songs.filter((ele)=>{
-        return ele.id == index;
-    })
+    }
+    // console.log("resultArray: " + resultArray.toString());
+    // debugger;
+    return resultArray;
+};
 
-    song_title.forEach(ele =>{
-        let {songName} = ele;
-        title.innerHTML = songName;
-    })
-    makeAllPlays()
+// Get a row (accepts 0, 1, or 2 as argument).
+// Returns the values of the elements.
+Grid.prototype.getRowValues = function (index) {
+    if (index !== 0 && index !== 1 && index !== 2) {
+        console.error("Wrong arg for getRowValues!");
+        return undefined;
+    }
+    var i = index * 3;
+    return this.cells.slice(i, i + 3);
+};
 
-    document.getElementById(`${index}`).classList.remove('bi-play-fill');
-    document.getElementById(`${index}`).classList.add('bi-pause-fill');
-    makeAllBackgrounds();
-    Array.from(document.getElementsByClassName('songItem'))[`${index-1}`].style.background = "rgb(105, 105, 170, .1)";
-    
-})
+// Get a row (accepts 0, 1, or 2 as argument).
+// Returns an array with the indices, not their values.
+Grid.prototype.getRowIndices = function (index) {
+    if (index !== 0 && index !== 1 && index !== 2) {
+        console.error("Wrong arg for getRowIndices!");
+        return undefined;
+    }
+    var row = [];
+    index = index * 3;
+    row.push(index);
+    row.push(index + 1);
+    row.push(index + 2);
+    return row;
+};
 
+// get a column (values)
+Grid.prototype.getColumnValues = function (index) {
+    if (index !== 0 && index !== 1 && index !== 2) {
+        console.error("Wrong arg for getColumnValues!");
+        return undefined;
+    }
+    var i, column = [];
+    for (i = index; i < this.cells.length; i += 3) {
+        column.push(this.cells[i]);
+    }
+    return column;
+};
 
-let left_scroll = document.getElementById('left_scroll');
-let right_scroll = document.getElementById('right_scroll');
-let pop_song = document.getElementsByClassName('pop_song')[0];
+// get a column (indices)
+Grid.prototype.getColumnIndices = function (index) {
+    if (index !== 0 && index !== 1 && index !== 2) {
+        console.error("Wrong arg for getColumnIndices!");
+        return undefined;
+    }
+    var i, column = [];
+    for (i = index; i < this.cells.length; i += 3) {
+        column.push(i);
+    }
+    return column;
+};
 
-left_scroll.addEventListener('click', ()=>{
-    pop_song.scrollLeft -= 330;
-})
-right_scroll.addEventListener('click', ()=>{
-    pop_song.scrollLeft += 330;
-})
+// get diagonal cells
+// arg 0: from top-left
+// arg 1: from top-right
+Grid.prototype.getDiagValues = function (arg) {
+    var cells = [];
+    if (arg !== 1 && arg !== 0) {
+        console.error("Wrong arg for getDiagValues!");
+        return undefined;
+    } else if (arg === 0) {
+        cells.push(this.cells[0]);
+        cells.push(this.cells[4]);
+        cells.push(this.cells[8]);
+    } else {
+        cells.push(this.cells[2]);
+        cells.push(this.cells[4]);
+        cells.push(this.cells[6]);
+    }
+    return cells;
+};
 
+// get diagonal cells
+// arg 0: from top-left
+// arg 1: from top-right
+Grid.prototype.getDiagIndices = function (arg) {
+    if (arg !== 1 && arg !== 0) {
+        console.error("Wrong arg for getDiagIndices!");
+        return undefined;
+    } else if (arg === 0) {
+        return [0, 4, 8];
+    } else {
+        return [2, 4, 6];
+    }
+};
 
-let left_scrolls = document.getElementById('left_scrolls');
-let right_scrolls = document.getElementById('right_scrolls');
-let item = document.getElementsByClassName('item')[0];
+// Get first index with two in a row (accepts computer or player as argument)
+Grid.prototype.getFirstWithTwoInARow = function (agent) {
+    if (agent !== computer && agent !== player) {
+        console.error("Function getFirstWithTwoInARow accepts only player or computer as argument.");
+        return undefined;
+    }
+    var sum = agent * 2,
+        freeCells = shuffleArray(this.getFreeCellIndices());
+    for (var i = 0; i < freeCells.length; i++) {
+        for (var j = 0; j < 3; j++) {
+            var rowV = this.getRowValues(j);
+            var rowI = this.getRowIndices(j);
+            var colV = this.getColumnValues(j);
+            var colI = this.getColumnIndices(j);
+            if (sumArray(rowV) == sum && isInArray(freeCells[i], rowI)) {
+                return freeCells[i];
+            } else if (sumArray(colV) == sum && isInArray(freeCells[i], colI)) {
+                return freeCells[i];
+            }
+        }
+        for (j = 0; j < 2; j++) {
+            var diagV = this.getDiagValues(j);
+            var diagI = this.getDiagIndices(j);
+            if (sumArray(diagV) == sum && isInArray(freeCells[i], diagI)) {
+                return freeCells[i];
+            }
+        }
+    }
+    return false;
+};
 
-left_scrolls.addEventListener('click', ()=>{
-    item.scrollLeft -= 330;
-})
-right_scrolls.addEventListener('click', ()=>{
-    item.scrollLeft += 330;
-})
+Grid.prototype.reset = function () {
+    for (var i = 0; i < this.cells.length; i++) {
+        this.cells[i] = 0;
+    }
+    return true;
+};
+
+//==================================
+// MAIN FUNCTIONS
+//==================================
+
+// executed when the page loads
+function initialize() {
+    myGrid = new Grid();
+    moves = 0;
+    winner = 0;
+    gameOver = false;
+    whoseTurn = player; // default, this may change
+    for (var i = 0; i <= myGrid.cells.length - 1; i++) {
+        myGrid.cells[i] = 0;
+    }
+    // setTimeout(assignRoles, 500);
+    setTimeout(showOptions, 500);
+    // debugger;
+}
+
+// Ask player if they want to play as X or O. X goes first.
+function assignRoles() {
+    askUser("Do you want to go first?");
+    document.getElementById("yesBtn").addEventListener("click", makePlayerX);
+    document.getElementById("noBtn").addEventListener("click", makePlayerO);
+}
+
+function makePlayerX() {
+    player = x;
+    computer = o;
+    whoseTurn = player;
+    playerText = xText;
+    computerText = oText;
+    document.getElementById("userFeedback").style.display = "none";
+    document.getElementById("yesBtn").removeEventListener("click", makePlayerX);
+    document.getElementById("noBtn").removeEventListener("click", makePlayerO);
+}
+
+function makePlayerO() {
+    player = o;
+    computer = x;
+    whoseTurn = computer;
+    playerText = oText;
+    computerText = xText;
+    setTimeout(makeComputerMove, 400);
+    document.getElementById("userFeedback").style.display = "none";
+    document.getElementById("yesBtn").removeEventListener("click", makePlayerX);
+    document.getElementById("noBtn").removeEventListener("click", makePlayerO);
+}
+
+// executed when player clicks one of the table cells
+function cellClicked(id) {
+    // The last character of the id corresponds to the numeric index in Grid.cells:
+    var idName = id.toString();
+    var cell = parseInt(idName[idName.length - 1]);
+    if (myGrid.cells[cell] > 0 || whoseTurn !== player || gameOver) {
+        // cell is already occupied or something else is wrong
+        return false;
+    }
+    moves += 1;
+    document.getElementById(id).innerHTML = playerText;
+    // randomize orientation (for looks only)
+    var rand = Math.random();
+    if (rand < 0.3) {
+        document.getElementById(id).style.transform = "rotate(180deg)";
+    } else if (rand > 0.6) {
+        document.getElementById(id).style.transform = "rotate(90deg)";
+    }
+    document.getElementById(id).style.cursor = "default";
+    myGrid.cells[cell] = player;
+    // Test if we have a winner:
+    if (moves >= 5) {
+        winner = checkWin();
+    }
+    if (winner === 0) {
+        whoseTurn = computer;
+        makeComputerMove();
+    }
+    return true;
+}
+
+// Executed when player hits restart button.
+// ask should be true if we should ask users if they want to play as X or O
+function restartGame(ask) {
+    if (moves > 0) {
+        var response = confirm("Are you sure you want to start over?");
+        if (response === false) {
+            return;
+        }
+    }
+    gameOver = false;
+    moves = 0;
+    winner = 0;
+    whoseTurn = x;
+    myGrid.reset();
+    for (var i = 0; i <= 8; i++) {
+        var id = "cell" + i.toString();
+        document.getElementById(id).innerHTML = "";
+        document.getElementById(id).style.cursor = "pointer";
+        document.getElementById(id).classList.remove("win-color");
+    }
+    if (ask === true) {
+        // setTimeout(assignRoles, 200);
+        setTimeout(showOptions, 200);
+    } else if (whoseTurn == computer) {
+        setTimeout(makeComputerMove, 800);
+    }
+}
+
+// The core logic of the game AI:
+function makeComputerMove() {
+    // debugger;
+    if (gameOver) {
+        return false;
+    }
+    var cell = -1,
+        myArr = [],
+        corners = [0,2,6,8];
+    if (moves >= 3) {
+        cell = myGrid.getFirstWithTwoInARow(computer);
+        if (cell === false) {
+            cell = myGrid.getFirstWithTwoInARow(player);
+        }
+        if (cell === false) {
+            if (myGrid.cells[4] === 0 && difficulty == 1) {
+                cell = 4;
+            } else {
+                myArr = myGrid.getFreeCellIndices();
+                cell = myArr[intRandom(0, myArr.length - 1)];
+            }
+        }
+        // Avoid a catch-22 situation:
+        if (moves == 3 && myGrid.cells[4] == computer && player == x && difficulty == 1) {
+            if (myGrid.cells[7] == player && (myGrid.cells[0] == player || myGrid.cells[2] == player)) {
+                myArr = [6,8];
+                cell = myArr[intRandom(0,1)];
+            }
+            else if (myGrid.cells[5] == player && (myGrid.cells[0] == player || myGrid.cells[6] == player)) {
+                myArr = [2,8];
+                cell = myArr[intRandom(0,1)];
+            }
+            else if (myGrid.cells[3] == player && (myGrid.cells[2] == player || myGrid.cells[8] == player)) {
+                myArr = [0,6];
+                cell = myArr[intRandom(0,1)];
+            }
+            else if (myGrid.cells[1] == player && (myGrid.cells[6] == player || myGrid.cells[8] == player)) {
+                myArr = [0,2];
+                cell = myArr[intRandom(0,1)];
+            }
+        }
+        else if (moves == 3 && myGrid.cells[4] == player && player == x && difficulty == 1) {
+            if (myGrid.cells[2] == player && myGrid.cells[6] == computer) {
+                cell = 8;
+            }
+            else if (myGrid.cells[0] == player && myGrid.cells[8] == computer) {
+                cell = 6;
+            }
+            else if (myGrid.cells[8] == player && myGrid.cells[0] == computer) {
+                cell = 2;
+            }
+            else if (myGrid.cells[6] == player && myGrid.cells[2] == computer) {
+                cell = 0;
+            }
+        }
+    } else if (moves === 1 && myGrid.cells[4] == player && difficulty == 1) {
+        // if player is X and played center, play one of the corners
+        cell = corners[intRandom(0,3)];
+    } else if (moves === 2 && myGrid.cells[4] == player && computer == x && difficulty == 1) {
+        // if player is O and played center, take two opposite corners
+        if (myGrid.cells[0] == computer) {
+            cell = 8;
+        }
+        else if (myGrid.cells[2] == computer) {
+            cell = 6;
+        }
+        else if (myGrid.cells[6] == computer) {
+            cell = 2;
+        }
+        else if (myGrid.cells[8] == computer) {
+            cell = 0;
+        }
+    } else if (moves === 0 && intRandom(1,10) < 8) {
+        // if computer is X, start with one of the corners sometimes
+        cell = corners[intRandom(0,3)];
+    } else {
+        // choose the center of the board if possible
+        if (myGrid.cells[4] === 0 && difficulty == 1) {
+            cell = 4;
+        } else {
+            myArr = myGrid.getFreeCellIndices();
+            cell = myArr[intRandom(0, myArr.length - 1)];
+        }
+    }
+    var id = "cell" + cell.toString();
+    // console.log("computer chooses " + id);
+    document.getElementById(id).innerHTML = computerText;
+    document.getElementById(id).style.cursor = "default";
+    // randomize rotation of marks on the board to make them look
+    // as if they were handwritten
+    var rand = Math.random();
+    if (rand < 0.3) {
+        document.getElementById(id).style.transform = "rotate(180deg)";
+    } else if (rand > 0.6) {
+        document.getElementById(id).style.transform = "rotate(90deg)";
+    }
+    myGrid.cells[cell] = computer;
+    moves += 1;
+    if (moves >= 5) {
+        winner = checkWin();
+    }
+    if (winner === 0 && !gameOver) {
+        whoseTurn = player;
+    }
+}
+
+// Check if the game is over and determine winner
+function checkWin() {
+    winner = 0;
+
+    // rows
+    for (var i = 0; i <= 2; i++) {
+        var row = myGrid.getRowValues(i);
+        if (row[0] > 0 && row[0] == row[1] && row[0] == row[2]) {
+            if (row[0] == computer) {
+                score.computer++;
+                winner = computer;
+                // console.log("computer wins");
+            } else {
+                score.player++;
+                winner = player;
+                // console.log("player wins");
+            }
+            // Give the winning row/column/diagonal a different bg-color
+            var tmpAr = myGrid.getRowIndices(i);
+            for (var j = 0; j < tmpAr.length; j++) {
+                var str = "cell" + tmpAr[j];
+                document.getElementById(str).classList.add("win-color");
+            }
+            setTimeout(endGame, 1000, winner);
+            return winner;
+        }
+    }
+
+    // columns
+    for (i = 0; i <= 2; i++) {
+        var col = myGrid.getColumnValues(i);
+        if (col[0] > 0 && col[0] == col[1] && col[0] == col[2]) {
+            if (col[0] == computer) {
+                score.computer++;
+                winner = computer;
+                // console.log("computer wins");
+            } else {
+                score.player++;
+                winner = player;
+                // console.log("player wins");
+            }
+            // Give the winning row/column/diagonal a different bg-color
+            var tmpAr = myGrid.getColumnIndices(i);
+            for (var j = 0; j < tmpAr.length; j++) {
+                var str = "cell" + tmpAr[j];
+                document.getElementById(str).classList.add("win-color");
+            }
+            setTimeout(endGame, 1000, winner);
+            return winner;
+        }
+    }
+
+    // diagonals
+    for (i = 0; i <= 1; i++) {
+        var diagonal = myGrid.getDiagValues(i);
+        if (diagonal[0] > 0 && diagonal[0] == diagonal[1] && diagonal[0] == diagonal[2]) {
+            if (diagonal[0] == computer) {
+                score.computer++;
+                winner = computer;
+                // console.log("computer wins");
+            } else {
+                score.player++;
+                winner = player;
+                // console.log("player wins");
+            }
+            // Give the winning row/column/diagonal a different bg-color
+            var tmpAr = myGrid.getDiagIndices(i);
+            for (var j = 0; j < tmpAr.length; j++) {
+                var str = "cell" + tmpAr[j];
+                document.getElementById(str).classList.add("win-color");
+            }
+            setTimeout(endGame, 1000, winner);
+            return winner;
+        }
+    }
+
+    // If we haven't returned a winner by now, if the board is full, it's a tie
+    var myArr = myGrid.getFreeCellIndices();
+    if (myArr.length === 0) {
+        winner = 10;
+        score.ties++;
+        endGame(winner);
+        return winner;
+    }
+
+    return winner;
+}
+
+function announceWinner(text) {
+    document.getElementById("winText").innerHTML = text;
+    document.getElementById("winAnnounce").style.display = "block";
+    setTimeout(closeModal, 1400, "winAnnounce");
+}
+
+function askUser(text) {
+    document.getElementById("questionText").innerHTML = text;
+    document.getElementById("userFeedback").style.display = "block";
+}
+
+function showOptions() {
+    if (player == o) {
+        document.getElementById("rx").checked = false;
+        document.getElementById("ro").checked = true;
+    }
+    else if (player == x) {
+        document.getElementById("rx").checked = true;
+        document.getElementById("ro").checked = false;
+    }
+    if (difficulty === 0) {
+        document.getElementById("r0").checked = true;
+        document.getElementById("r1").checked = false;
+    }
+    else {
+        document.getElementById("r0").checked = false;
+        document.getElementById("r1").checked = true;
+    }
+    document.getElementById("optionsDlg").style.display = "block";
+}
+
+function getOptions() {
+    var diffs = document.getElementsByName('difficulty');
+    for (var i = 0; i < diffs.length; i++) {
+        if (diffs[i].checked) {
+            difficulty = parseInt(diffs[i].value);
+            break;
+            // debugger;
+        }
+    }
+    if (document.getElementById('rx').checked === true) {
+        player = x;
+        computer = o;
+        whoseTurn = player;
+        playerText = xText;
+        computerText = oText;
+    }
+    else {
+        player = o;
+        computer = x;
+        whoseTurn = computer;
+        playerText = oText;
+        computerText = xText;
+        setTimeout(makeComputerMove, 400);
+    }
+    document.getElementById("optionsDlg").style.display = "none";
+}
+
+function closeModal(id) {
+    document.getElementById(id).style.display = "none";
+}
+
+function endGame(who) {
+    if (who == player) {
+        announceWinner("Congratulations, you won!");
+    } else if (who == computer) {
+        announceWinner("Computer wins!");
+    } else {
+        announceWinner("It's a tie!");
+    }
+    gameOver = true;
+    whoseTurn = 0;
+    moves = 0;
+    winner = 0;
+    document.getElementById("computer_score").innerHTML = score.computer;
+    document.getElementById("tie_score").innerHTML = score.ties;
+    document.getElementById("player_score").innerHTML = score.player;
+    for (var i = 0; i <= 8; i++) {
+        var id = "cell" + i.toString();
+        document.getElementById(id).style.cursor = "default";
+    }
+    setTimeout(restartGame, 800);
+}
