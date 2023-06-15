@@ -1,7 +1,8 @@
 # TIC-TAC-TOE-GAME
 
 HTML, CSS, & JAVASCRIPT Project
-##Links To Deployed Site, Final Project and Blog Article
+
+## Links To Deployed Site, Final Project and Blog Article
 
 Deployed Site  - [TicTacToe](https://ogundeyidaniel.github.io)
 
