@@ -12,6 +12,9 @@ Ogundeyi Daniel- [Github](https://github.com/ogundeyidaniel)
 
 Ogundeyi Daniel- [Linkedln](https://www.linkedin.com/in/danielogundeyi)
 
+## Authors
+Ogundeyi Daniel- [Github](https://github.com/ogundeyidaniel) / [Twitter](https://twitter.com/Ogundeyi01) / [Linkedln](https://www.linkedin.com/in/danielogundeyi)
+
 ## Installation
 * Clone this repository: `git clone "https://github.com/ogundeyidaniel.github.io"`
 * Access ogundeyidaniel.github.io directory: `cd ogundeyidaniel.github.io`
