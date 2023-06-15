@@ -2,10 +2,10 @@
 
 HTML, CSS, & JAVASCRIPT Project
 ##Links To Deployed Site, Final Project and Blog Article
-Deployed Site  - [TicTacToe] (https://ogundeyidaniel.github.io)
-Ogundeyi Daniel- [Linkedln]  (https://www.linkedin.com/pulse/portfolio-tic-tac-toe-project-daniel-ogundeyi)
-Ogundeyi Daniel- [Github]    (https://github.com/ogundeyidaniel)
-Ogundeyi Daniel- [Linkedln]  (https://www.linkedin.com/in/danielogundeyi)
+Deployed Site  - [TicTacToe](https://ogundeyidaniel.github.io)
+Ogundeyi Daniel- [Linkedln](https://www.linkedin.com/pulse/portfolio-tic-tac-toe-project-daniel-ogundeyi)
+Ogundeyi Daniel- [Github](https://github.com/ogundeyidaniel)
+Ogundeyi Daniel- [Linkedln](https://www.linkedin.com/in/danielogundeyi)
 
 ### OBJECTIVE:
 This project aims to develop a Tic Tac Toe game using HTML, CSS, & JAVASCRIPT. It mainly consists of developing and implementing a computer program that plays Tic Tac Toe against another player.<br/>
