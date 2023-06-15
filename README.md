@@ -4,13 +4,13 @@ HTML, CSS, & JAVASCRIPT Project
 
 ## Links To Deployed Site, Final Project and Blog Article
 
-Deployed Site  - [TicTacToe](https://ogundeyidaniel.github.io)
+* Deployed Site  - [TicTacToe](https://ogundeyidaniel.github.io)
 
-Ogundeyi Daniel- [Linkedln](https://www.linkedin.com/pulse/portfolio-tic-tac-toe-project-daniel-ogundeyi)
+* Ogundeyi Daniel- [Linkedln](https://www.linkedin.com/pulse/portfolio-tic-tac-toe-project-daniel-ogundeyi)
 
-Ogundeyi Daniel- [Github](https://github.com/ogundeyidaniel)
+* Ogundeyi Daniel- [Github](https://github.com/ogundeyidaniel)
 
-Ogundeyi Daniel- [Linkedln](https://www.linkedin.com/in/danielogundeyi)
+* Ogundeyi Daniel- [Linkedln](https://www.linkedin.com/in/danielogundeyi)
 
 ## Authors
 * Ogundeyi Daniel- [Github](https://github.com/ogundeyidaniel) / [Twitter](https://twitter.com/Ogundeyi01) / [Linkedln](https://www.linkedin.com/in/danielogundeyi)
