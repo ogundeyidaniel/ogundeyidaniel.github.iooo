@@ -13,7 +13,8 @@ Ogundeyi Daniel- [Github](https://github.com/ogundeyidaniel)
 Ogundeyi Daniel- [Linkedln](https://www.linkedin.com/in/danielogundeyi)
 
 ## Authors
-Ogundeyi Daniel- [Github](https://github.com/ogundeyidaniel) / [Twitter](https://twitter.com/Ogundeyi01) / [Linkedln](https://www.linkedin.com/in/danielogundeyi)
+* Ogundeyi Daniel- [Github](https://github.com/ogundeyidaniel) / [Twitter](https://twitter.com/Ogundeyi01) / [Linkedln](https://www.linkedin.com/in/danielogundeyi)
+* Yamkam Lionel Jospin- [Github](https://github.com/lio72)
 
 ## Installation
 * Clone this repository: `git clone "https://github.com/ogundeyidaniel.github.io"`
