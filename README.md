@@ -13,23 +13,23 @@ The two players take turns putting marks on a 3x3 board. The goal of Tic Tac Toe
 The game can be played by two players. There are two options for players: (a) Human  (b) Computer
 
 ### GAME RULES:
-A player can choose between two symbols with his opponent, usual game uses “X” and “O”. 
+A player can choose between two symbols with his opponent, the usual game uses “X” and “O”. 
 1.	The player that gets to play first will get the "X" mark (we call him/her player 1) and the player that gets to play second will get the "O" mark (we call him/her player 2).
 
 2.	Players 1 and 2 take turns making moves with Player 1 playing mark “X” and Player 2 playing mark “O”.
 
-3.	A player marks any of the 3x3 squares with his mark (“X” or “O”) and their aim is to create a straight line horizontally, vertically or diagonally with two intensiintentionsthe an ,the ons:<br/>
+3.	A player marks any of the 3x3 squares with his mark (“X” or “O”) and their aim is to create a straight line horizontally, vertically or diagonally with two intensiintentionsthe an , the ons:<br/>
 a.	One of the players gets three of his/her marks in a row (vertically, horizontally, or diagonally) i.e. that player wins the game.<br/>
 b.	If no one can create a straight line with their own mark and all the positions on the board are occupied, then the game ends in a  draw/tie.
 
 ### IMPLEMENTATION PLAN:
 The implementation workflow for this project is as follows:
 
-<p align="center"><img src="img/Python_flowchart.png" width="430" height="400" /></p>
+<p align="center"><img src="img/Javascript_flowchart.png" width="430" height="400" /></p>
 
-In order to visualize the defined game rules and description, the game is shown in Figures below.
+In order to visualize the defined game rules and description, the game is shown in the Figures below.
 
-First the game will start with empty board.<br/>
+First, the game will start with an empty board.<br/>
 
 <p align="center"><img src="img/Empty_Board.png" width="280" height="280" /></p>
 
